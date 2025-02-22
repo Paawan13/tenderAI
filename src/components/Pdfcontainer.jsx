@@ -7,7 +7,7 @@ import {
   setNumPages,
   goToNextPage,
   goToPreviousPage,
-} from "../features/pdf/pdfSlice";
+} from "../features/pdf/pdfslice";
 import "./Pdfcontainer.css";
 import { getAuth } from "firebase/auth";
 import axios from "axios";

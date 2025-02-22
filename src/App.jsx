@@ -11,7 +11,7 @@ import {
   LeftOutlined,
   RightOutlined,
 } from "@ant-design/icons";
-import { goToNextPage, goToPreviousPage } from "./features/pdf/pdfSlice";
+import { goToNextPage, goToPreviousPage } from "./features/pdf/pdfslice";
 import Dialog from "./components/Drawer";
 const App = () => {
   const [originalFile, setOriginalFile] = useState(null);
@@ -102,8 +102,8 @@ const App = () => {
                   onClick={() => dispatch(goToPreviousPage())}
                   disabled={currentPage <= 1}
                   className={`my-2 px-2 rounded-md ${currentPage <= 1
-                      ? "opacity-50 cursor-not-allowed"
-                      : "bg-blue-500 text-white hover:bg-blue-600"
+                    ? "opacity-50 cursor-not-allowed"
+                    : "bg-blue-500 text-white hover:bg-blue-600"
                     }`}
                 >
                   <LeftOutlined />
@@ -115,8 +115,8 @@ const App = () => {
                   onClick={() => dispatch(goToNextPage())}
                   disabled={currentPage >= numPages}
                   className={`my-2 px-2 rounded-md ${currentPage >= numPages
-                      ? "opacity-50 cursor-not-allowed"
-                      : "bg-blue-500 text-white hover:bg-blue-600"
+                    ? "opacity-50 cursor-not-allowed"
+                    : "bg-blue-500 text-white hover:bg-blue-600"
                     }`}
                 >
                   <RightOutlined />
