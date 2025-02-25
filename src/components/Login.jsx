@@ -12,11 +12,24 @@ const Auth = () => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post('/api/auth/login', {
-        email,
-        password
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_LOGIN}/login/`,
+        new URLSearchParams({
+          email,
+          password,
+        }).toString(),
+        {
+          headers: {
+            'accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        }
+      );
       messageApi.success(response.data.message || 'Login Successful');
+      setTimeout(() => {
+        window.location.href = '/';
+      }
+        , 1000);
     } catch (error) {
       messageApi.error(error.response?.data?.detail || 'Login failed!');
     } finally {

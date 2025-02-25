@@ -29,18 +29,13 @@ const Chatcontainer = () => {
     setisLoading(true);
 
     try {
-      const response = await axios.post(import.meta.env.VITE_API_URL, {
-        query: input,
-        chat_history: [],
-        system_str: "",
-        topk_retrieval: 4,
-        max_tokens: 1024,
-      });
-
+      // 'https://ms-r-bizrate-workflow.trycloudflare.com/query?query=what%20is%20the%20Bid%20end%20date&collection_name=hello' \
+      const { data } = await axios.post(`https://ms-r-bizrate-workflow.trycloudflare.com/query?query=${encodeURIComponent(input)}&collection_name=${localStorage.getItem("file")}`)
+      console.log(data, "response")
       const aiMessage = {
         id: chat.length + 2,
         sender: "friend",
-        message: response.data["chat_history"][0][1],
+        message: data.response,
         timestamp: new Date().toISOString(),
       };
 
@@ -58,8 +53,8 @@ const Chatcontainer = () => {
 
   return (
     <div className="w-6/12 max-sm:w-screen flex justify-center flex-col items-center h-full relative">
-      <div className="w-full" style={{width: "90%"}}>
-    <Proposal />
+      <div className="w-full" style={{ width: "90%" }}>
+        <Proposal />
       </div>
       <div
         style={{ width: "90%", height: "90%" }}
@@ -70,11 +65,10 @@ const Chatcontainer = () => {
             chat.map((msg) => (
               <div
                 key={msg.id}
-                className={`mx-4 my-1 p-3 rounded-lg max-w-7xl ${
-                  msg.sender === "user"
-                    ? "bg-slate-400 self-end"
-                    : "bg-slate-300 self-start"
-                }`}
+                className={`mx-4 my-1 p-3 rounded-lg max-w-7xl ${msg.sender === "user"
+                  ? "bg-slate-400 self-end"
+                  : "bg-slate-300 self-start"
+                  }`}
               >
                 {msg.sender === "friend" ? (
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>

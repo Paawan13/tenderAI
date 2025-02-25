@@ -25,12 +25,12 @@ const Proposal = () => {
       const doc = new Document({
         sections: [
           {
-        properties: {},
-        children: [
-          new Paragraph({
-            children: [new TextRun(formattedText)],
-          }),
-        ],
+            properties: {},
+            children: [
+              new Paragraph({
+                children: [new TextRun(formattedText)],
+              }),
+            ],
           },
         ],
       });

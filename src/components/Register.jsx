@@ -41,9 +41,6 @@ const Register = () => {
         }
       );
       messageApi.success(response.data.message || 'Registration Successful');
-      setTimeout(() => {
-        setOpen(true);
-      }, 5000);
     } catch (error) {
       messageApi.error(error.response?.data?.detail || 'Registration failed!');
     } finally {

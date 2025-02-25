@@ -31,18 +31,14 @@ const Pdfcontainer = ({ fileUrl, file }) => {
         .map((part) => part.replace(/[^a-zA-Z0-9]/g, ""))
         .join("");
       console.log("🚀 ~ onDocumentLoadSuccess ~ fileName:", fileName);
-
-      const response = await axios.post(import.meta.env.VITE_UPLOAD_URL, form, {
+      localStorage.setItem("file", fileName);
+      // 'https://b453-125-63-116-114.ngrok-free.app/process?do_ocr=true&do_table_structure=true&do_cell_matching=true&collection_name=hello' \
+      const response = await axios.post(`${import.meta.env.VITE_UPLOAD_URL}/process?do_ocr=true&do_table_structure=true&do_cell_matching=true&collection_name=${(fileName)}`, form, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
       console.log("🚀 ~ onDocumentLoadSuccess ~ response:", response);
-      const response2 = await axios.post(import.meta.env.VITE_NAME_URL, {
-        project_name: fileName,
-        embed_model: "nvidia/nv-embedqa-e5-v5",
-      });
-      console.log("🚀 ~ onDocumentLoadSuccess ~ response2:", response2);
     } catch (error) {
       console.log(error);
     } finally {

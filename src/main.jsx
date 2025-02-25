@@ -14,10 +14,11 @@ createRoot(document.getElementById("root")).render(
       <Header />
       <Routes>
         {/* Redirect root path and any /:id to login */}
-        <Route path="/" element={<Navigate to="/register" replace />} />
-        <Route path="/:id" element={<Navigate to="/register" replace />} />
+        {/* <Route path="/" element={<Navigate to="/register" replace />} /> */}
+        <Route path="/" element={<App />} />
+        <Route path="/:id" element={<App />} />
         {/* Login and Register routes */}
-        <Route path="/login" element={<Navigate to="/register" replace />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
       </Routes>
     </Router>
