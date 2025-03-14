@@ -7,15 +7,6 @@ import {
   setNumPages,
   goToNextPage,
   goToPreviousPage,
-<<<<<<< HEAD
-} from "../features/pdf/pdfslice";
-import "./Pdfcontainer.css";
-import { getAuth } from "firebase/auth";
-import axios from "axios";
-
-pdfjs.GlobalWorkerOptions.workerSrc = `
-//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
-=======
   setPdfLoading,
 } from "../features/pdf/pdfslice";
 import { getAuth } from "firebase/auth";
@@ -24,14 +15,10 @@ import "./Pdfcontainer.css";
 
 // Configure PDF.js worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
->>>>>>> 25c469c (updated frontend)
 
 const Pdfcontainer = ({ fileUrl, file }) => {
   const dispatch = useDispatch();
   const currentPage = useSelector((state) => state.pdf.currentPage);
-<<<<<<< HEAD
-  const [isloading, setisLoading] = useState(false);
-=======
   const numPages = useSelector((state) => state.pdf.numPages);
   const isPdfLoading = useSelector((state) => state.pdf.isPdfLoading);
   const containerRef = useRef(null);
@@ -43,19 +30,14 @@ const Pdfcontainer = ({ fileUrl, file }) => {
     }
   }, []);
 
->>>>>>> 25c469c (updated frontend)
   const onDocumentLoadSuccess = async ({ numPages }) => {
     dispatch(setNumPages(numPages));
     const form = new FormData();
     form.append("file", file);
     const { name } = file;
-<<<<<<< HEAD
-    setisLoading(true);
-=======
 
     dispatch(setPdfLoading(true));
 
->>>>>>> 25c469c (updated frontend)
     try {
       const fileName = name
         .split("-")
@@ -63,14 +45,6 @@ const Pdfcontainer = ({ fileUrl, file }) => {
         .join("");
       console.log("🚀 ~ onDocumentLoadSuccess ~ fileName:", fileName);
       localStorage.setItem("file", fileName);
-<<<<<<< HEAD
-      // 'https://b453-125-63-116-114.ngrok-free.app/process?do_ocr=true&do_table_structure=true&do_cell_matching=true&collection_name=hello' \
-      const response = await axios.post(`${import.meta.env.VITE_UPLOAD_URL}/process?do_ocr=true&do_table_structure=true&do_cell_matching=true&collection_name=${(fileName)}`, form, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-=======
 
       const response = await axios.post(
         `${import.meta.env.VITE_UPLOAD_URL}/process?do_ocr=true&do_table_structure=true&do_cell_matching=true&collection_name=${fileName}`,
@@ -81,31 +55,10 @@ const Pdfcontainer = ({ fileUrl, file }) => {
           },
         }
       );
->>>>>>> 25c469c (updated frontend)
       console.log("🚀 ~ onDocumentLoadSuccess ~ response:", response);
     } catch (error) {
       console.log(error);
     } finally {
-<<<<<<< HEAD
-      setisLoading(false);
-    }
-  };
-  return (
-    <div className="flex flex-col items-center justify-start min-h-screen">
-      {isloading && (
-        <div className="loading-banner fixed top-0 left-0 right-0 bg-gray-800 text-white text-center py-2">
-          Loading...
-        </div>
-      )}
-      <div className="w-max mt-4">
-        <Document
-          file={fileUrl}
-          onLoadSuccess={onDocumentLoadSuccess}
-          onLoadError={(error) => console.error("Failed to load PDF:", error)}
-        >
-          <Page scale={1} pageNumber={currentPage} />
-        </Document>
-=======
       dispatch(setPdfLoading(false));
     }
   };
@@ -132,48 +85,30 @@ const Pdfcontainer = ({ fileUrl, file }) => {
         </div>
       )}
 
-      <div
-        ref={containerRef}
-        className="w-full max-w-4xl mt-6 sm:mt-8 bg-white rounded-lg shadow-lg p-4 border border-blue-100 overflow-auto flex flex-col"
-        style={{ height: "80vh" }}
-      >
-        {/* Navigation and Zoom Controls (At the Top) */}
-        <div className="flex items-center justify-between mb-4">
+      <div ref={containerRef} className="w-full max-w-4xl mt-6 sm:mt-8 bg-white rounded-lg shadow-lg p-4 border border-blue-100 overflow-auto">
+        {/* Navigation and Zoom Controls */}
+        <div className="flex justify-between mb-6">
           <button
             onClick={() => dispatch(goToPreviousPage())}
             disabled={currentPage <= 1}
             className="py-2 px-4 rounded-md bg-blue-500 text-white font-medium transition-all duration-300 hover:bg-blue-600 disabled:bg-blue-300 disabled:cursor-not-allowed"
           >
-            <svg
-              className="w-5 h-5 inline-block mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-            </svg>
             Previous
           </button>
-          <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4">
-            <span className="text-sm font-medium text-gray-700">
-              Page {currentPage} of {numPages || "--"}
-            </span>
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={handleZoomOut}
-                className="py-2 px-4 rounded-md bg-gray-500 text-white font-medium transition-all duration-300 hover:bg-gray-600"
-              >
-                -
-              </button>
-              <span className="text-sm font-medium text-gray-700">Zoom: {Math.round(scale * 100)}%</span>
-              <button
-                onClick={handleZoomIn}
-                className="py-2 px-4 rounded-md bg-gray-500 text-white font-medium transition-all duration-300 hover:bg-gray-600"
-              >
-                +
-              </button>
-            </div>
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={handleZoomOut}
+              className="py-2 px-4 rounded-md bg-gray-500 text-white font-medium transition-all duration-300 hover:bg-gray-600"
+            >
+              -
+            </button>
+            <span className="text-sm font-medium text-gray-700">Zoom: {Math.round(scale * 100)}%</span>
+            <button
+              onClick={handleZoomIn}
+              className="py-2 px-4 rounded-md bg-gray-500 text-white font-medium transition-all duration-300 hover:bg-gray-600"
+            >
+              +
+            </button>
           </div>
           <button
             onClick={() => dispatch(goToNextPage())}
@@ -181,60 +116,24 @@ const Pdfcontainer = ({ fileUrl, file }) => {
             className="py-2 px-4 rounded-md bg-blue-500 text-white font-medium transition-all duration-300 hover:bg-blue-600 disabled:bg-blue-300 disabled:cursor-not-allowed"
           >
             Next
-            <svg
-              className="w-5 h-5 inline-block ml-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-            </svg>
           </button>
         </div>
 
         {/* PDF Viewer */}
-        <div className="pdf-container w-full flex-1 relative rounded-md border border-blue-200 flex justify-center items-center overflow-auto bg-gray-50">
-          {fileUrl ? (
-            <Document file={fileUrl} onLoadSuccess={onDocumentLoadSuccess} className="flex justify-center w-full h-full">
-              <Page
-                pageNumber={currentPage}
-                className="pdf-page"
-                scale={scale}
-                renderAnnotationLayer={false}
-                renderTextLayer={false}
-                width={containerRef.current?.clientWidth}
-              />
-            </Document>
-          ) : (
-            <div className="flex flex-col items-center justify-center h-full text-gray-500">
-              <svg
-                className="w-16 h-16 mb-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2z"
-                />
-              </svg>
-             
-              <p>No PDF loaded. Please upload a document.</p>
-            </div>
-          )}
+        <div className="pdf-container w-full h-[70vh] relative rounded-md border border-blue-200 flex justify-center items-center overflow-auto bg-gray-50">
+          <Document file={fileUrl} onLoadSuccess={onDocumentLoadSuccess} className="flex justify-center">
+            <Page
+              pageNumber={currentPage}
+              className="pdf-page"
+              scale={scale}
+              renderAnnotationLayer={false}
+              renderTextLayer={false}
+            />
+          </Document>
         </div>
->>>>>>> 25c469c (updated frontend)
       </div>
     </div>
   );
 };
 
-<<<<<<< HEAD
 export default Pdfcontainer;
-=======
-export default Pdfcontainer;
->>>>>>> 25c469c (updated frontend)
