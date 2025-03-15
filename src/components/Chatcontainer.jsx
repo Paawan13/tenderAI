@@ -12,7 +12,7 @@ const Chatcontainer = () => {
   const [isloading, setisLoading] = useState(false);
   const dummy = useRef();
   const [input, setInput] = useState("");
-  const [isSummaryGenerated, setIsSummaryGenerated] = useState(false); // State to track summary generation
+  const [isSummaryGenerated, setIsSummaryGenerated] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -20,7 +20,7 @@ const Chatcontainer = () => {
 
   useEffect(() => {
     if (isPdfLoading) {
-      setChat([]); // Clear chat when a new PDF is loading
+      setChat([]);
     }
   }, [isPdfLoading]);
 
@@ -43,31 +43,33 @@ const Chatcontainer = () => {
     setisLoading(true);
 
     try {
+      const collectionName = localStorage.getItem("file");
+      console.log("Sending request:", { query: input, collection_name: collectionName });
       const { data } = await axios.post(
-        `https://ms-r-bizrate-workflow.trycloudflare.com/query?query=${encodeURIComponent(
-          input
-        )}&collection_name=${localStorage.getItem("file")}`
+        `https://lyric-emails-treo-background.trycloudflare.com/query?query=${encodeURIComponent(input)}&collection_name=${encodeURIComponent(collectionName || "")}`,
+        {},
+        { timeout: 10000 } // Added timeout for reliability
       );
-      console.log(data, "response");
+      console.log("Response received:", data);
       const aiMessage = {
         id: chat.length + 2,
         sender: "friend",
-        message: data.response,
+        message: data.response || "No response from server",
         timestamp: new Date().toISOString(),
       };
 
       setChat((prevChat) => [...prevChat, aiMessage]);
       if (input.toLowerCase().includes("summary")) {
-        setIsSummaryGenerated(true); // Enable download if summary is requested
+        setIsSummaryGenerated(true);
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error details:", error.response?.data || error.message);
       setChat((prevChat) => [
         ...prevChat,
         {
           id: chat.length + 2,
           sender: "friend",
-          message: "Sorry, I encountered an error processing your request. Please try again.",
+          message: `Error: ${error.message}. Please try again.`,
           timestamp: new Date().toISOString(),
         },
       ]);
@@ -82,9 +84,7 @@ const Chatcontainer = () => {
 
   const handleDownloadSummary = () => {
     if (isSummaryGenerated) {
-      // Placeholder for download logic (e.g., trigger file download)
       console.log("Downloading summary...");
-      // Example: window.open("path_to_summary_file", "_blank");
     }
   };
 
@@ -96,7 +96,6 @@ const Chatcontainer = () => {
         style={{ width: "95%", height: "95%" }}
         className="border border-blue-200 shadow-lg rounded-lg flex flex-col bg-white overflow-hidden"
       >
-        {/* ✅ Enhanced Header Section */}
         <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-6 py-4 font-medium flex items-center justify-between">
           <div className="flex items-center gap-3">
             <svg
@@ -116,7 +115,6 @@ const Chatcontainer = () => {
             <span className="text-lg">TenderAI Assistant</span>
           </div>
 
-          {/* ✅ Enhanced Button Group */}
           <div className="flex flex-wrap items-center gap-4">
             <button
               className="bg-gradient-to-b from-white to-blue-50 text-blue-600 px-4 py-2 text-sm rounded-md shadow-md hover:from-blue-50 hover:to-blue-100 hover:shadow-lg transition-all duration-200 border border-blue-100 font-medium flex items-center gap-2"
@@ -161,11 +159,9 @@ const Chatcontainer = () => {
               </svg>
               Proposal
             </button>
-            
           </div>
         </div>
 
-        {/* ✅ Enhanced Chat Messages */}
         <div className="flex-grow overflow-y-auto p-6 bg-gray-50 flex flex-col gap-4">
           {isPdfLoading && (
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 my-2 flex items-center space-x-3 animate-pulse">
@@ -214,7 +210,6 @@ const Chatcontainer = () => {
           <div ref={dummy}></div>
         </div>
 
-        {/* ✅ Enhanced Input Section */}
         <div className="border-t border-blue-100 p-4 bg-white">
           <Sendmessage
             handleChange={handleChange}
