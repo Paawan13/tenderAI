@@ -44,6 +44,7 @@ const Chatcontainer = () => {
 
     try {
       const collectionName = localStorage.getItem("file");
+      console.log("Collection name from localStorage:", collectionName);
       console.log("Sending request:", { query: input, collection_name: collectionName });
       const { data } = await axios.post(
         `https://lyric-emails-treo-background.trycloudflare.com/query?query=${encodeURIComponent(input)}&collection_name=${encodeURIComponent(collectionName || "")}`,
@@ -54,7 +55,7 @@ const Chatcontainer = () => {
       const aiMessage = {
         id: chat.length + 2,
         sender: "friend",
-        message: data.response || "No response from server",
+        message: data.response || data.answer || data.message || "No response from server",
         timestamp: new Date().toISOString(),
       };
 
@@ -86,16 +87,16 @@ const Chatcontainer = () => {
         throw new Error("No document selected. Please upload a PDF first.");
       }
 
+      console.log("Collection name from localStorage:", collectionName);
       console.log("Fetching proposal for:", { collection_name: collectionName });
       const { data } = await axios.post(
-        `https://double-reseller-require-fabrics.trycloudflare.com/proposal`,
+        `https://fame-associate-independently-ict.trycloudflare.com/tender_details`, // Updated endpoint
         { collection_name: collectionName },
         { timeout: 10000, headers: { "Content-Type": "application/json" } }
       );
       console.log("Proposal response:", data);
 
-      // Navigate to Proposal.jsx with the proposal data
-      navigate("/proposal", { state: { proposal: data.proposal || "No proposal generated." } });
+      navigate("/proposal", { state: { proposal: data.proposal || data.response || data.message || "No proposal generated." } });
     } catch (error) {
       console.error("Proposal error:", error.response?.data || error.message);
       setChat((prevChat) => [
