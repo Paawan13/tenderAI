@@ -48,7 +48,7 @@ const Chatcontainer = () => {
       const { data } = await axios.post(
         `https://lyric-emails-treo-background.trycloudflare.com/query?query=${encodeURIComponent(input)}&collection_name=${encodeURIComponent(collectionName || "")}`,
         {},
-        { timeout: 10000 } // Added timeout for reliability
+        { timeout: 10000 }
       );
       console.log("Response received:", data);
       const aiMessage = {
@@ -70,6 +70,40 @@ const Chatcontainer = () => {
           id: chat.length + 2,
           sender: "friend",
           message: `Error: ${error.message}. Please try again.`,
+          timestamp: new Date().toISOString(),
+        },
+      ]);
+    } finally {
+      setisLoading(false);
+    }
+  };
+
+  const handleGenerateProposal = async () => {
+    setisLoading(true);
+    try {
+      const collectionName = localStorage.getItem("file");
+      if (!collectionName) {
+        throw new Error("No document selected. Please upload a PDF first.");
+      }
+
+      console.log("Fetching proposal for:", { collection_name: collectionName });
+      const { data } = await axios.post(
+        `https://double-reseller-require-fabrics.trycloudflare.com/proposal`,
+        { collection_name: collectionName },
+        { timeout: 10000, headers: { "Content-Type": "application/json" } }
+      );
+      console.log("Proposal response:", data);
+
+      // Navigate to Proposal.jsx with the proposal data
+      navigate("/proposal", { state: { proposal: data.proposal || "No proposal generated." } });
+    } catch (error) {
+      console.error("Proposal error:", error.response?.data || error.message);
+      setChat((prevChat) => [
+        ...prevChat,
+        {
+          id: chat.length + 1,
+          sender: "friend",
+          message: `Error generating proposal: ${error.message}. Please try again.`,
           timestamp: new Date().toISOString(),
         },
       ]);
@@ -136,7 +170,7 @@ const Chatcontainer = () => {
               Summary
             </button>
             <button
-              onClick={() => navigate("/proposal")}
+              onClick={handleGenerateProposal}
               className={`px-4 py-2 text-sm rounded-md transition-colors flex items-center gap-2 ${
                 location.pathname === "/proposal"
                   ? "bg-white text-blue-600 font-semibold border border-blue-100"
