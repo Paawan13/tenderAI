@@ -46,16 +46,17 @@ const Chatcontainer = () => {
       const collectionName = localStorage.getItem("file");
       console.log("Collection name from localStorage:", collectionName);
       console.log("Sending request:", { query: input, collection_name: collectionName });
-      const { data } = await axios.post(
+      const response = await axios.post(
         `https://lyric-emails-treo-background.trycloudflare.com/query?query=${encodeURIComponent(input)}&collection_name=${encodeURIComponent(collectionName || "")}`,
         {},
         { timeout: 10000 }
       );
-      console.log("Response received:", data);
+      console.log("Raw response:", response);
+      console.log("Response data:", response.data);
       const aiMessage = {
         id: chat.length + 2,
         sender: "friend",
-        message: data.response || data.answer || data.message || "No response from server",
+        message: response.data.response || response.data.answer || response.data.message || "No response from server",
         timestamp: new Date().toISOString(),
       };
 
@@ -64,7 +65,9 @@ const Chatcontainer = () => {
         setIsSummaryGenerated(true);
       }
     } catch (error) {
-      console.error("Error details:", error.response?.data || error.message);
+      console.error("Chat error - Full response:", error.response);
+      console.error("Chat error - Data:", error.response?.data);
+      console.error("Chat error - Message:", error.message);
       setChat((prevChat) => [
         ...prevChat,
         {
@@ -86,25 +89,28 @@ const Chatcontainer = () => {
       if (!collectionName) {
         throw new Error("No document selected. Please upload a PDF first.");
       }
-
+  
       console.log("Collection name from localStorage:", collectionName);
       console.log("Fetching proposal for:", { collection_name: collectionName });
-      const { data } = await axios.post(
-        `https://fame-associate-independently-ict.trycloudflare.com/tender_details`, // Updated endpoint
-        { collection_name: collectionName },
+      const response = await axios.post(
+        `https://fame-associate-independently-ict.trycloudflare.com/tender_details`,
+        { collection_name: collectionName }, // Ensure this is sent
         { timeout: 10000, headers: { "Content-Type": "application/json" } }
       );
-      console.log("Proposal response:", data);
-
-      navigate("/proposal", { state: { proposal: data.proposal || data.response || data.message || "No proposal generated." } });
+      console.log("Proposal response:", response.data);
+  
+      navigate("/proposal", { state: { proposal: response.data.proposal || response.data.response || response.data.message || "No proposal generated." } });
     } catch (error) {
-      console.error("Proposal error:", error.response?.data || error.message);
+      console.error("Proposal error - Full response:", error.response);
+      console.error("Proposal error - Data:", error.response?.data);
+      console.error("Proposal error - Validation Details:", error.response?.data?.detail);
+      console.error("Proposal error - Message:", error.message);
       setChat((prevChat) => [
         ...prevChat,
         {
           id: chat.length + 1,
           sender: "friend",
-          message: `Error generating proposal: ${error.message}. Please try again.`,
+          message: `Error generating proposal: ${error.message}. Please try again. Collected value: ${localStorage.getItem("file") || 'null'}`,
           timestamp: new Date().toISOString(),
         },
       ]);
